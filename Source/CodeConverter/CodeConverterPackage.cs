@@ -75,8 +75,28 @@ namespace LevelUp.CodeConverter
 				menuItem = new MenuCommand(MenuItemCallback2, menuCommandID);
 				mcs.AddCommand(menuItem);
             }
+
+			DeveloperfusionConverter.Default.ProgressChanged += Default_ProgressChanged;
         }
         #endregion
+
+		public void PasteToEditor()
+		{
+			var text = Clipboard.GetText(TextDataFormat.Text);
+			PasteToEditor(text);
+		}
+
+		public void PasteToEditor(string text)
+		{
+			if (text == null)
+				return;
+
+			var dte = (DTE)Package.GetGlobalService(typeof(DTE));
+			var doc = (TextDocument)dte.ActiveDocument.Object("TextDocument");
+			var start = doc.Selection.TopPoint.CreateEditPoint();
+
+			doc.Selection.Insert(text);
+		} 
 
         /// <summary>
         /// This function is the callback used to execute a command when the a menu item is clicked.
@@ -84,23 +104,33 @@ namespace LevelUp.CodeConverter
 		/// the OleMenuCommandService service and the MenuCommand class.
 		/// </summary>
 		private void MenuItemCallback(object sender, EventArgs e)
-        {     
-			var text = Clipboard.GetText(TextDataFormat.Text);
-			var dte = (DTE)Package.GetGlobalService(typeof(DTE));
-            var doc = (TextDocument)dte.ActiveDocument.Object("TextDocument");
-            var start = doc.Selection.TopPoint.CreateEditPoint();
-
-             doc.Selection.Insert(ConvertHelper.ConvertToCSharp(text));
+        {
+			var convertedCode = DeveloperfusionConverter.Default.ConvertToCSharpFromClipboard();
+			PasteToEditor(convertedCode);
 		}
 
 		private void MenuItemCallback2(object sender, EventArgs e)
 		{
-			var text = Clipboard.GetText(TextDataFormat.Text);
-			var dte = (DTE)Package.GetGlobalService(typeof(DTE));
-			var doc = (TextDocument)dte.ActiveDocument.Object("TextDocument");
-			var start = doc.Selection.TopPoint.CreateEditPoint();
+			var convertedCode = DeveloperfusionConverter.Default.ConvertToVBFromClipboard();
+			PasteToEditor(convertedCode);
+		}
 
-			doc.Selection.Insert(ConvertHelper.ConvertToVB(text));
+		private void Output(string text)
+		{
+			var pane = base.GetOutputPane(VSConstants.GUID_OutWindowDebugPane, "Debug");
+			pane.Activate();
+			pane.OutputString(text);
+		}
+
+
+		void Default_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+		{
+			if (e.ProgressPercentage == 0 || e.ProgressPercentage == 100)
+			{
+				Output(string.Format("----- {0} -----{1}", e.UserState.ToString(), Environment.NewLine));
+				return;
+			}
+			Output(e.UserState.ToString() + Environment.NewLine);
 		}
     }
 }
