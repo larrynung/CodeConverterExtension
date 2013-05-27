@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="4e5ea1a3-9490-4c9d-9acb-17220ada8c4d" Version="1.0" Language="en-US" Publisher="Larry Nung" />
+    <Identity Id="4e5ea1a3-9490-4c9d-9acb-17220ada8c4d" Version="1.1" Language="en-US" Publisher="Larry Nung" />
     <DisplayName>Code Converter Extension</DisplayName>
     <Description xml:space="preserve">Code Converter is a visual studio extension. It can help developer convert the code quickly and easily.</Description>
     <MoreInfo>http://www.dotblogs.com.tw/larrynung</MoreInfo>
