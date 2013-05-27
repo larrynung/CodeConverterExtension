@@ -126,6 +126,15 @@ namespace LevelUp.CodeConverter
 			return ConvertToVB(Clipboard.GetText());
 		}
 
+		public void CopyAndConvertToVB(string code)
+		{
+			var convertedCode = ConvertToVB(code);
+			if (string.IsNullOrEmpty(convertedCode))
+				return;
+
+			Clipboard.SetText(convertedCode);
+		}
+
 		public string ConvertToCSharp(string code)
 		{
 			return ConvertCode("vb-to-csharp", code);
@@ -135,6 +144,15 @@ namespace LevelUp.CodeConverter
 		public string ConvertToCSharpFromClipboard()
 		{
 			return ConvertToCSharp(Clipboard.GetText());
+		}
+
+		public void CopyAndConvertToCSharp(string code)
+		{
+			var convertedCode = ConvertToCSharp(code);
+			if (string.IsNullOrEmpty(convertedCode))
+				return;
+
+			Clipboard.SetText(convertedCode);
 		}
 		#endregion
 	}

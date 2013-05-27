@@ -66,13 +66,23 @@ namespace LevelUp.CodeConverter
             if ( null != mcs )
             {
                 // Create the command for the menu item.
-                CommandID menuCommandID = new CommandID(GuidList.guidCodeConverterCmdSet, (int)PkgCmdIDList.cmdidConvertCode);
+                CommandID menuCommandID = new CommandID(GuidList.guidCodeConverterCmdSet, (int)PkgCmdIDList.cmdidConvertCSharpCode);
                 MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID );
                 mcs.AddCommand( menuItem );
 
 				// Create the command for the menu item.
-				menuCommandID = new CommandID(GuidList.guidCodeConverterCmdSet, (int)PkgCmdIDList.cmdidConvertCodeVB);
+				menuCommandID = new CommandID(GuidList.guidCodeConverterCmdSet, (int)PkgCmdIDList.cmdidConvertVBCode);
 				menuItem = new MenuCommand(MenuItemCallback2, menuCommandID);
+				mcs.AddCommand(menuItem);
+
+				// Create the command for the menu item.
+				menuCommandID = new CommandID(GuidList.guidCodeConverterCmdSet, (int)PkgCmdIDList.cmdidCopyAndConvertCSharpCode);
+				menuItem = new MenuCommand(MenuItemCallback3, menuCommandID);
+				mcs.AddCommand(menuItem);
+
+				// Create the command for the menu item.
+				menuCommandID = new CommandID(GuidList.guidCodeConverterCmdSet, (int)PkgCmdIDList.cmdidCopyAndConvertVBCode);
+				menuItem = new MenuCommand(MenuItemCallback4, menuCommandID);
 				mcs.AddCommand(menuItem);
             }
 
@@ -96,7 +106,17 @@ namespace LevelUp.CodeConverter
 			var start = doc.Selection.TopPoint.CreateEditPoint();
 
 			doc.Selection.Insert(text);
-		} 
+		}
+
+
+		private static string GetSelectionText()
+		{
+			var dte = (DTE)Package.GetGlobalService(typeof(DTE));
+			var doc = (TextDocument)dte.ActiveDocument.Object("TextDocument");
+			var start = doc.Selection.TopPoint.CreateEditPoint();
+
+			return doc.Selection.Text;
+		}
 
         /// <summary>
         /// This function is the callback used to execute a command when the a menu item is clicked.
@@ -114,6 +134,19 @@ namespace LevelUp.CodeConverter
 			var convertedCode = DeveloperfusionConverter.Default.ConvertToVBFromClipboard();
 			PasteToEditor(convertedCode);
 		}
+
+		private void MenuItemCallback3(object sender, EventArgs e)
+		{
+			var selectionText = GetSelectionText();
+			DeveloperfusionConverter.Default.CopyAndConvertToCSharp(selectionText);
+		}
+
+		private void MenuItemCallback4(object sender, EventArgs e)
+		{
+			var selectionText = GetSelectionText();
+			DeveloperfusionConverter.Default.CopyAndConvertToVB(selectionText);
+		}
+
 
 		private void Output(string text)
 		{
